@@ -20,13 +20,20 @@ from flask_migrate import Migrate
 app = Flask(__name__)
 moment = Moment(app)
 app.config.from_object('config')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+migrate =Migrate(app, db)
 # TODO: connect to a local postgresql database
+
 
 #----------------------------------------------------------------------------#
 # Models.
 #----------------------------------------------------------------------------#
+Show = db.Table('Show',
+    db.Column('venue_id', db.Integer, db.ForeignKey('Venue.id'), primary_key=True),
+    db.Column('artist_id', db.Integer, db.ForeignKey('Artist.id'), primary_key=True))
+
 
 class Venue(db.Model):
     __tablename__ = 'Venue'
@@ -39,9 +46,15 @@ class Venue(db.Model):
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
-migrate =Migrate(app, db)
+    website=db.Column(db.String(120))
+    seeking_talent=db.Column(db.Boolean, nullable=False, default=False)
+    seeking_description=db.Column(db.String(500))
+    past_shows_count=db.Column(db.Integer)
+    upcoming_shows_count=db.Column(db.Integer)
+    genres=db.Column(db.String(120))
+    artists = db.relationship('Artist', secondary=Show, backref=db.backref('venue', lazy=True))
+
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -54,11 +67,18 @@ class Artist(db.Model):
     genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
-migrate =Migrate(app, db)
+    website=db.Column(db.String(120))
+    seeking_venue=db.Column(db.Boolean, nullable=False, default=False)
+    seeking_description=db.Column(db.String(500))
+    past_shows_count=db.Column(db.Integer)
+    upcoming_shows_count=db.Column(db.Integer)
+
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+
+
+
 
 #----------------------------------------------------------------------------#
 # Filters.
