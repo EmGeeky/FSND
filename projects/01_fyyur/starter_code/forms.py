@@ -218,3 +218,5 @@ class ArtistForm(Form):
     )
 
 # TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
+# class searchForm(Form):
+#     venueName = StringField('Search venue', validators=[DataRequired(), Length(max=60)])
